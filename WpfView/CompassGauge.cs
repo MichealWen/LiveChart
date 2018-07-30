@@ -205,7 +205,7 @@ namespace LiveCharts.Wpf
                         text = "南";
                         break;
                     case "270":
-                        text = "东";
+                        text = "西";
                         break;
                     default:
                         break;
