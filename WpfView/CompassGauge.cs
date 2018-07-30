@@ -46,7 +46,7 @@ namespace LiveCharts.Wpf
         /// </summary>
         public CompassGauge()
         {
-            
+
 
             Canvas = new Canvas();
             Content = Canvas;
@@ -108,9 +108,9 @@ namespace LiveCharts.Wpf
         /// <summary>
         /// Gets or sets the opening angle in the gauge
         /// </summary>
-        public double Wedge
+        private double Wedge
         {
-            get { return (double)GetValue(WedgeProperty); }
+            get { return 360; }
             set { SetValue(WedgeProperty, value); }
         }
 
@@ -342,11 +342,11 @@ namespace LiveCharts.Wpf
         private void MoveStick()
         {
             Wedge = Wedge > 360 ? 360 : (Wedge < 0 ? 0 : Wedge);
-          
+
             var fromAlpha = (360 - Wedge) * .5;
             var toAlpha = 360 - fromAlpha;
 
-            var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, Value) ;
+            var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, Value);
 
             if (DisableaAnimations)
             {
@@ -414,7 +414,7 @@ namespace LiveCharts.Wpf
 
             for (var i = FromValue; i <= ToValue; i += ts)
             {
-                var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, i) + 90;
+                var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, i) - 90;
 
                 var tick = new Line
                 {
@@ -425,40 +425,72 @@ namespace LiveCharts.Wpf
                 };
                 Canvas.Children.Add(tick);
                 tick.SetBinding(Shape.StrokeProperty,
-                    new Binding { Path = new PropertyPath(TicksForegroundProperty), Source = this });
+                   new Binding { Path = new PropertyPath(TicksForegroundProperty), Source = this });
                 tick.SetBinding(Shape.StrokeThicknessProperty,
                     new Binding { Path = new PropertyPath(TicksStrokeThicknessProperty), Source = this });
             }
 
-            var ls = double.IsNaN(LabelsStep) ? DecideInterval((ToValue - FromValue) / 5) : LabelsStep;
+            var ls = double.IsNaN(LabelsStep) ? 45 : LabelsStep;
             if (ls / (FromValue - ToValue) > 300)
                 throw new LiveChartsException("LabelsStep property is too small compared with the range in " +
                                               "the gauge, to avoid performance issues, please increase it.");
 
             for (var i = FromValue; i <= ToValue; i += ls)
             {
-                var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, i) + 90;
+                if (i % 90 == 0)
+                    continue;
+                DrawTick(fromAlpha, toAlpha, ticksHi, labelsHj, i);
 
-                var tick = new Line
-                {
-                    X1 = ActualWidth * .5 + ticksHi * Math.Cos(alpha * Math.PI / 180),
-                    X2 = ActualWidth * .5 + labelsHj * Math.Cos(alpha * Math.PI / 180),
-                    Y1 = ActualHeight * .5 + ticksHi * Math.Sin(alpha * Math.PI / 180),
-                    Y2 = ActualHeight * .5 + labelsHj * Math.Sin(alpha * Math.PI / 180)
-                };
+            }
+            //绘制东西南北标签
+            for (var i = FromValue; i <= ToValue; i += 90)
+            {
+                DrawTick(fromAlpha,toAlpha,ticksHi,labelsHj,i);
 
-                Canvas.Children.Add(tick);
-                string text = "";
+            }
+
+            MoveStick();
+        }
+
+        /// <summary>
+        /// 绘制长标签与lable
+        /// </summary>
+        /// <param name="fromAlpha"></param>
+        /// <param name="toAlpha"></param>
+        /// <param name="ticksHi"></param>
+        /// <param name="labelsHj"></param>
+        /// <param name="i"></param>
+        void DrawTick(double fromAlpha, double toAlpha, double ticksHi,double labelsHj,double i)
+        {
+            var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, i) - 90;
+
+            var tick = new Line
+            {
+                X1 = ActualWidth * .5 + ticksHi * Math.Cos(alpha * Math.PI / 180),
+                X2 = ActualWidth * .5 + labelsHj * Math.Cos(alpha * Math.PI / 180),
+                Y1 = ActualHeight * .5 + ticksHi * Math.Sin(alpha * Math.PI / 180),
+                Y2 = ActualHeight * .5 + labelsHj * Math.Sin(alpha * Math.PI / 180)
+            };
+
+            Canvas.Children.Add(tick);
+
+            tick.SetBinding(Shape.StrokeProperty,
+                new Binding { Path = new PropertyPath(TicksForegroundProperty), Source = this });
+            tick.SetBinding(Shape.StrokeThicknessProperty,
+                new Binding { Path = new PropertyPath(TicksStrokeThicknessProperty), Source = this });
+            string text = "";
+            if(i%90==0)
+            {
                 switch (i.ToString())
                 {
                     case "0":
-                        text = "南";
+                        text = "北";
                         break;
                     case "90":
-                        text = "西";
+                        text = "东";
                         break;
                     case "180":
-                        text = "北";
+                        text = "南";
                         break;
                     case "270":
                         text = "东";
@@ -466,28 +498,27 @@ namespace LiveCharts.Wpf
                     default:
                         break;
                 }
-                var label = new TextBlock
-                {
-                    Text = text
-                };
-
-                label.SetBinding(EffectProperty,
-                    new Binding { Path = new PropertyPath(LabelsEffectProperty), Source = this });
-
-                Canvas.Children.Add(label);
-                label.UpdateLayout();
-                Canvas.SetLeft(label, alpha < 270
-                    ? tick.X2
-                    : (Math.Abs(alpha - 270) < 4
-                        ? tick.X2 - label.ActualWidth * .5
-                        : tick.X2 - label.ActualWidth));
-                Canvas.SetTop(label, tick.Y2);
-                tick.SetBinding(Shape.StrokeProperty,
-                    new Binding { Path = new PropertyPath(TicksForegroundProperty), Source = this });
-                tick.SetBinding(Shape.StrokeThicknessProperty,
-                    new Binding { Path = new PropertyPath(TicksStrokeThicknessProperty), Source = this });
             }
-            MoveStick();
+            else
+            {
+                text = LabelFormatter(i);
+            }
+            var label = new TextBlock
+            {
+                Text = text
+            };
+
+            label.SetBinding(EffectProperty,
+                new Binding { Path = new PropertyPath(LabelsEffectProperty), Source = this });
+
+            Canvas.Children.Add(label);
+            label.UpdateLayout();
+            Canvas.SetLeft(label, alpha < 270
+                ? tick.X2
+                : (Math.Abs(alpha - 270) < 4
+                    ? tick.X2 - label.ActualWidth * .5
+                    : tick.X2 - label.ActualWidth));
+            Canvas.SetTop(label, tick.Y2);
         }
 
         internal void UpdateSections()
