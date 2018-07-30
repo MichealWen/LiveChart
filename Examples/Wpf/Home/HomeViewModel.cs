@@ -103,6 +103,7 @@ namespace Wpf.Home
                         new SampleVm("Doughnut Chart", typeof(DoughnutChartExample)),
                         new SampleVm("Solid Gauges", typeof(Gauge360)),
                         new SampleVm("Angular Gauge", typeof(AngularGaugeExmple)),
+                        new SampleVm("Linear Gauge", typeof(LinearGaugeExample)),
                         new SampleVm("Heat Series", typeof(HeatSeriesExample)),
                         new SampleVm("GeoHeatMap", typeof(GeoMapExample)),
                         new SampleVm("Gantt Chart", typeof(GanttExample))

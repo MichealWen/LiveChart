@@ -47,35 +47,14 @@ namespace LiveCharts.Wpf
         /// </summary>
         public LinearGauge()
         {
-            RectangleGeometry myRectangleGeometry = new RectangleGeometry();
-            myRectangleGeometry.Rect = new Rect(500, 500, 25, 25);
-
             Canvas = new Canvas();
-            Content = Canvas;
-
-            StickRotateTransform = new RotateTransform(180);
-            Stick = new Path
-            {
-
-                //Data = myRectangleGeometry,//("m0,90 a5,5 0 0 0 20,0 l-8,-88 a2,2 0 0 0 -4 0 z"),
-                Fill = Brushes.CornflowerBlue,
-                Stretch = Stretch.Fill,
-                RenderTransformOrigin = new Point(0.5, 0.9),
-                RenderTransform = StickRotateTransform
-            };
-            Canvas.Children.Add(Stick);
-            Panel.SetZIndex(Stick, 1);
-
+            Content = Canvas; 
             Canvas.SetBinding(WidthProperty,
                 new Binding { Path = new PropertyPath(ActualWidthProperty), Source = this });
             Canvas.SetBinding(HeightProperty,
                 new Binding { Path = new PropertyPath(ActualHeightProperty), Source = this });
 
             SetCurrentValue(SectionsProperty, new List<LinearSection>());
-            SetCurrentValue(NeedleFillProperty, new SolidColorBrush(Color.FromRgb(255, 90, 100)));
-
-            Stick.SetBinding(Shape.FillProperty,
-                new Binding { Path = new PropertyPath(NeedleFillProperty), Source = this });
 
             SetCurrentValue(AnimationsSpeedProperty, TimeSpan.FromMilliseconds(500));
             SetCurrentValue(TicksForegroundProperty, new SolidColorBrush(Color.FromRgb(250, 250, 210)));
@@ -96,9 +75,9 @@ namespace LiveCharts.Wpf
         #region Properties
 
         private Canvas Canvas { get; set; }
-        
-        private Path Stick { get; set; }
-        private RotateTransform StickRotateTransform { get; set; }
+
+
+     
         private bool IsControlLaoded { get; set; }
         private Dictionary<LinearSection, Rectangle> Slices { get; set; }
 
@@ -278,19 +257,6 @@ namespace LiveCharts.Wpf
             set { SetValue(SectionsInnerRadiusProperty, value); }
         }
 
-        /// <summary>
-        /// The needle fill property
-        /// </summary>
-        public static readonly DependencyProperty NeedleFillProperty = DependencyProperty.Register(
-            "NeedleFill", typeof(Brush), typeof(LinearGauge), new PropertyMetadata(default(Brush)));
-        /// <summary>
-        /// Gets o sets the needle fill
-        /// </summary>
-        public Brush NeedleFill
-        {
-            get { return (Brush)GetValue(NeedleFillProperty); }
-            set { SetValue(NeedleFillProperty, value); }
-        }
 
         /// <summary>
         /// The labels effect property
@@ -345,41 +311,45 @@ namespace LiveCharts.Wpf
             var ag = (LinearGauge)o;
             ag.Draw();
         }
-
+        Rectangle ValueRec = new Rectangle();
         /// <summary>
         /// 画实时值
         /// </summary>
         private void MoveStick()
-        {
-            var ValueHight = (GetActualHeight() / (ToValue - FromValue)) * (Value-FromValue);
-            Rectangle ValueRec = new Rectangle();
-            SolidColorBrush s = new SolidColorBrush(Color.FromRgb(192, 192, 192));
-            ValueRec.Fill = s;
-            ValueRec.Height = ValueHight;
-            ValueRec.Width = BackWidth/2;
-            Canvas.Children.Add(ValueRec);
-            Canvas.SetLeft(ValueRec, ActualWidth * .5+ValueRec.Width*.5);
-            Canvas.SetBottom(ValueRec, BottomHight);
+        {  if (Value < FromValue)
+            {
+                Value = FromValue;
+            }
+            if (Value > ToValue)
+            {
+                Value = ToValue;
+            }
+            var ValueHight = (GetActualHeight() / (ToValue - FromValue)) * (Value - FromValue);
+
+          
+            if (DisableaAnimations)
+            {
+                ValueRec.Height = ValueHight;
+            }
+            else
+            {
+                ValueRec.Height = ValueHight;
+
+                ValueRec.BeginAnimation(Rectangle.HeightProperty,
+                    new DoubleAnimation(ValueHight, AnimationsSpeed));
+            }
         }
 
         /// <summary>
         /// 为顶部预留
         /// </summary>
-        double topHight = 5;
+       
         internal void Draw()
         {
-            
+
             if (!IsControlLaoded) return;
 
-            //No cache for you gauge :( kill and redraw please
-            foreach (var child in Canvas.Children.Cast<UIElement>()
-                .Where(x => !Equals(x, Stick) && !(x is LinearSection) && !(x is PieSlice)).ToArray())
-                Canvas.Children.Remove(child);
-            ////画背景
-            DrawBackGround();
-            ////画底部
-            //DrawBottom();
-
+       
             foreach (var section in Sections)
             {
                 Rectangle slice;
@@ -403,9 +373,6 @@ namespace LiveCharts.Wpf
             UpdateSections();
 
             var ts = double.IsNaN(TicksStep) ? DecideInterval((ToValue - FromValue) / 5) : TicksStep;
-            if (ts / (FromValue - ToValue) > 300)
-                throw new LiveChartsException("TicksStep property is too small compared with the range in " +
-                                              "the gauge, to avoid performance issues, please increase it.");
 
             var unit = (GetActualHeight() / (ToValue - FromValue));
             //画短刻度
@@ -416,9 +383,9 @@ namespace LiveCharts.Wpf
                 var tick = new Line
                 {
                     X1 = ActualWidth * .5,
-                    X2 = ActualWidth * .5+5 ,
-                    Y1 = bottom+5,
-                    Y2 = bottom+5
+                    X2 = ActualWidth * .5 + 5,
+                    Y1 = bottom ,
+                    Y2 = bottom 
                 };
                 Canvas.Children.Add(tick);
                 tick.SetBinding(Shape.StrokeProperty,
@@ -436,16 +403,16 @@ namespace LiveCharts.Wpf
             //画长刻度与数字
             for (var i = FromValue; i <= ToValue; i += ls)
             {
-                
+
                 var bottom = (i - FromValue) * unit;
-              
+
 
                 var tick = new Line
                 {
                     X1 = ActualWidth * .5,
-                    X2 = ActualWidth * .5+10,
-                    Y1 = bottom+5,
-                    Y2 = bottom+5,
+                    X2 = ActualWidth * .5 + 10,
+                    Y1 = bottom ,
+                    Y2 = bottom ,
                 };
                 Canvas.Children.Add(tick);
                 var label = new TextBlock
@@ -458,44 +425,39 @@ namespace LiveCharts.Wpf
 
                 Canvas.Children.Add(label);
                 label.UpdateLayout();
-              
-                Canvas.SetLeft(label,ActualWidth*.5-label.ActualWidth*.5-10);
-                Canvas.SetBottom(label,bottom-3+ BottomHight);
+
+                Canvas.SetLeft(label, ActualWidth * .5 - label.ActualWidth * .5 - 10);
+                Canvas.SetBottom(label, bottom);
                 tick.SetBinding(Shape.StrokeProperty,
                     new Binding { Path = new PropertyPath(TicksForegroundProperty), Source = this });
                 tick.SetBinding(Shape.StrokeThicknessProperty,
                     new Binding { Path = new PropertyPath(TicksStrokeThicknessProperty), Source = this });
             }
-          
+            if (!Canvas.Children.Contains(ValueRec))
+            {
+                ValueRec = new Rectangle
+                {
+                    Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0)),
+                    Width = BackWidth / 4
+                };
+                Canvas.Children.Add(ValueRec);
+                Canvas.SetLeft(ValueRec, ActualWidth * 0.5 + ValueRec.Width * 1.5);
+                Canvas.SetBottom(ValueRec, 0);
+            }
+
+
             MoveStick();
-      
-          
-        }
 
-        /// <summary>
-        /// 画背景
-        /// </summary>
-        private void DrawBackGround()
-        {
-            Rectangle rec = new Rectangle();
-            rec.Height =  ActualHeight-BottomHight+12;
-            rec.Width = BackWidth;
-            if (string.IsNullOrEmpty(Type) || Type == "WDJ")
-                rec.Fill = new SolidColorBrush(Colors.Green);
-            if(Type == "YLT")
-                rec.Fill = new SolidColorBrush(Colors.Gray);
-            rec.RadiusX = 5;
-            rec.RadiusY = 5;
-            Canvas.Children.Add(rec);
-            Canvas.SetTop(rec,0);
-            Canvas.SetLeft(rec, ActualWidth * .5);
 
         }
+
+
 
         internal void UpdateSections()
         {
+
             if (!IsControlLaoded) return;
-            
+
             var d = ActualWidth < ActualHeight ? ActualWidth : ActualHeight;
 
             if (Sections.Any())
@@ -506,12 +468,12 @@ namespace LiveCharts.Wpf
 
                     var h = GetActualHeight() / (ToValue - FromValue) * (section.ToValue - section.FromValue);
                     var bottom = (section.FromValue - FromValue) * GetActualHeight() / (ToValue - FromValue);
-                    Canvas.SetBottom(slice,bottom+ BottomHight);
+                    Canvas.SetBottom(slice, bottom);
                     Canvas.SetLeft(slice, ActualWidth * .5);
-                    if(Sections.IndexOf(section) == Sections.Count - 1)
+                    if (Sections.IndexOf(section) == Sections.Count - 1)
                     {
-                        Canvas.SetTop(slice, topHight);
-                      
+                        Canvas.SetTop(slice, 0);
+
                     }
                     slice.Height = h;
                     slice.Width = BackWidth;
@@ -520,81 +482,11 @@ namespace LiveCharts.Wpf
             }
         }
 
-        /// <summary>
-        /// 底部圆球的高度/直径
-        /// </summary>
-        public double BottomHight
-        {
-            get {
-                if (string.IsNullOrEmpty(Type)||Type == "WDJ")
-                    return BottomHight = BackWidth + 30;
-                else
-                    return 12;
-            }
-            set {; }
-        }
 
 
-        /// <summary>
-        /// 画底
-        /// </summary>
-        void DrawBottom()
-        {
-            if (string.IsNullOrEmpty(Type))
-            {
-                Type = "WDJ";
-            }
-            if (Type == "WDJ")
-            {
-                Ellipse ell = new Ellipse();
-                ell.Height = BottomHight;
-                ell.Width = BottomHight;
-                ell.Fill = new SolidColorBrush(Colors.Green);
-                Canvas.Children.Add(ell);
-                var left = (BottomHight - BackWidth) / 2;
-                Canvas.SetLeft(ell, ActualWidth * .5-left);
-                Canvas.SetBottom(ell, 0);
-                Ellipse ellInner = new Ellipse();
-                ellInner.Height = BottomHight*.6;
-                ellInner.Width = BottomHight*.6;
-                double radiusDifference = (ell.Height - ellInner.Height)/2;
-                ellInner.Fill = new SolidColorBrush(Color.FromRgb(192,192,192));
-                Canvas.Children.Add(ellInner);
-                Canvas.SetLeft(ellInner, (ActualWidth * .5 - left) + radiusDifference);
-                Canvas.SetBottom(ellInner, radiusDifference);
-                Rectangle rec = new Rectangle();
-                rec.Width = BackWidth/2;
-                rec.Height = radiusDifference+10;
-                rec.Fill = new SolidColorBrush(Color.FromRgb(192, 192, 192));
-                Canvas.Children.Add(rec);
-                Canvas.SetLeft(rec, ActualWidth * .5+BackWidth/4);
-                Canvas.SetBottom(rec, radiusDifference+ellInner.Height-5);
-            }
-            if (Type == "YLT")
-            {
-                Border bor = new Border();
-                bor.CornerRadius = new CornerRadius(500,500,0,0);
-                bor.Background = new SolidColorBrush(Colors.Gray);
-                bor.Height = 12;
-                bor.Width = BackWidth + 20;
-                Canvas.Children.Add(bor);
-                Canvas.SetLeft(bor, ActualWidth * .5 -10);
-                Canvas.SetBottom(bor, 0);
-                Rectangle rec = new Rectangle();
-                rec.Height = 10;
-                rec.Width = BackWidth;
-                rec.Fill = new SolidColorBrush(Colors.Gray);
-                Canvas.Children.Add(rec);
-                Canvas.SetLeft(rec, ActualWidth * .5);
-                Canvas.SetBottom(rec, 2);
-            }
-
-        }
-      
         double GetActualHeight()
         {
-            if (ActualHeight == 0) return 0;
-            return ActualHeight - BottomHight- topHight; 
+            return ActualHeight;
         }
         private static double DecideInterval(double minimum)
         {
