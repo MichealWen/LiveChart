@@ -487,6 +487,10 @@ namespace LiveCharts.Wpf
 
                 foreach (var section in Sections)
                 {
+                    if (section.Visibility==Visibility.Visible)
+                    {
+                        
+                  
                     var slice = Slices[section];
                     
                     Canvas.SetTop(slice, ActualHeight * .5);
@@ -502,6 +506,7 @@ namespace LiveCharts.Wpf
                     slice.Radius = d*.5;
                     slice.InnerRadius = d*.5*SectionsInnerRadius;
                     slice.Fill = section.Fill;
+                    }
                 }
             }
         }
