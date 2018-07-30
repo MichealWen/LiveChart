@@ -153,9 +153,9 @@ namespace LiveCharts.Wpf
         /// <summary>
         /// Gets or sets the minimum value of the gauge
         /// </summary>
-        public double FromValue
+        private double FromValue
         {
-            get { return (double)GetValue(FromValueProperty); }
+            get { return 0; }
             set { SetValue(FromValueProperty, value); }
         }
 
@@ -168,9 +168,9 @@ namespace LiveCharts.Wpf
         /// <summary>
         /// Gets or sets the maximum value of the gauge
         /// </summary>
-        public double ToValue
+        private double ToValue
         {
-            get { return (double)GetValue(ToValueProperty); }
+            get { return 359; }
             set { SetValue(ToValueProperty, value); }
         }
 
