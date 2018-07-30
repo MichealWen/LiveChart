@@ -381,8 +381,8 @@ namespace LiveCharts.Wpf
                 {
                     X1 = ActualWidth * .5,
                     X2 = ActualWidth * .5 + 5,
-                    Y1 = bottom,
-                    Y2 = bottom
+                    Y1 = ActualHeight - bottom,
+                    Y2 = ActualHeight - bottom
                 };
                 Canvas.Children.Add(tick);
                 tick.SetBinding(Shape.StrokeProperty,
@@ -408,8 +408,8 @@ namespace LiveCharts.Wpf
                 {
                     X1 = ActualWidth * .5,
                     X2 = ActualWidth * .5 + 10,
-                    Y1 = bottom,
-                    Y2 = bottom,
+                    Y1 = ActualHeight - bottom,
+                    Y2 = ActualHeight - bottom,
                 };
                 Canvas.Children.Add(tick);
                 var label = new TextBlock

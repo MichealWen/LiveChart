@@ -225,12 +225,27 @@ namespace LiveCharts.Wpf
 
             Canvas.Children.Add(label);
             label.UpdateLayout();
-            Canvas.SetLeft(label, alpha < 270
-                ? tick.X2
-                : (Math.Abs(alpha - 270) < 4
-                    ? tick.X2 - label.ActualWidth * .5
-                    : tick.X2 - label.ActualWidth));
-            Canvas.SetTop(label, tick.Y2);
+            if(alpha>=-90 && alpha < 0)
+            {
+                Canvas.SetLeft(label,tick.X2-label.ActualWidth*.7);
+                Canvas.SetTop(label, tick.Y2);
+            }
+            else if (alpha > 0 && alpha <90)
+            {
+                Canvas.SetLeft(label, tick.X2 - label.ActualWidth);
+                Canvas.SetTop(label, tick.Y2-label.ActualHeight*.5);
+            }
+            else if(alpha > 90 && alpha <= 180)
+            {
+                Canvas.SetLeft(label, tick.X2 );
+                Canvas.SetTop(label, tick.Y2 - label.ActualHeight*.7);
+            }
+            else
+            {
+                Canvas.SetLeft(label, tick.X2);
+                Canvas.SetTop(label, tick.Y2 );
+            }
+           
         }
 
         internal override void UpdateSections()
