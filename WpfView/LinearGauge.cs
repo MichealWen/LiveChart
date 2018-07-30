@@ -48,7 +48,7 @@ namespace LiveCharts.Wpf
         public LinearGauge()
         {
             Canvas = new Canvas();
-            Content = Canvas; 
+            Content = Canvas;
             Canvas.SetBinding(WidthProperty,
                 new Binding { Path = new PropertyPath(ActualWidthProperty), Source = this });
             Canvas.SetBinding(HeightProperty,
@@ -77,7 +77,7 @@ namespace LiveCharts.Wpf
         private Canvas Canvas { get; set; }
 
 
-     
+
         private bool IsControlLaoded { get; set; }
         private Dictionary<LinearSection, Rectangle> Slices { get; set; }
 
@@ -316,7 +316,8 @@ namespace LiveCharts.Wpf
         /// 画实时值
         /// </summary>
         private void MoveStick()
-        {  if (Value < FromValue)
+        {
+            if (Value < FromValue)
             {
                 Value = FromValue;
             }
@@ -326,7 +327,7 @@ namespace LiveCharts.Wpf
             }
             var ValueHight = (GetActualHeight() / (ToValue - FromValue)) * (Value - FromValue);
 
-          
+
             if (DisableaAnimations)
             {
                 ValueRec.Height = ValueHight;
@@ -345,7 +346,7 @@ namespace LiveCharts.Wpf
 
             if (!IsControlLaoded) return;
 
-       
+
             foreach (var section in Sections)
             {
                 Rectangle slice;
@@ -380,8 +381,8 @@ namespace LiveCharts.Wpf
                 {
                     X1 = ActualWidth * .5,
                     X2 = ActualWidth * .5 + 5,
-                    Y1 = bottom ,
-                    Y2 = bottom 
+                    Y1 = bottom,
+                    Y2 = bottom
                 };
                 Canvas.Children.Add(tick);
                 tick.SetBinding(Shape.StrokeProperty,
@@ -407,8 +408,8 @@ namespace LiveCharts.Wpf
                 {
                     X1 = ActualWidth * .5,
                     X2 = ActualWidth * .5 + 10,
-                    Y1 = bottom ,
-                    Y2 = bottom ,
+                    Y1 = bottom,
+                    Y2 = bottom,
                 };
                 Canvas.Children.Add(tick);
                 var label = new TextBlock
@@ -423,7 +424,7 @@ namespace LiveCharts.Wpf
                 label.UpdateLayout();
 
                 Canvas.SetLeft(label, ActualWidth * .5 - label.ActualWidth * .5 - 10);
-                Canvas.SetBottom(label, bottom-(label.ActualHeight/2));
+                Canvas.SetBottom(label, bottom - (label.ActualHeight / 2));
                 tick.SetBinding(Shape.StrokeProperty,
                     new Binding { Path = new PropertyPath(TicksForegroundProperty), Source = this });
                 tick.SetBinding(Shape.StrokeThicknessProperty,
@@ -460,15 +461,19 @@ namespace LiveCharts.Wpf
             {
                 foreach (var section in Sections)
                 {
-                    var slice = Slices[section];
+                    if (section.Visibility == Visibility.Visible)
+                    {
+                        var slice = Slices[section];
 
-                    var h = GetActualHeight() / (ToValue - FromValue) * (section.ToValue - section.FromValue);
-                    var bottom = (section.FromValue - FromValue) * GetActualHeight() / (ToValue - FromValue);
-                    Canvas.SetBottom(slice, bottom);
-                    Canvas.SetLeft(slice, ActualWidth * .5);
-                    slice.Height = h;
-                    slice.Width = BackWidth;
-                    slice.Fill = section.Fill;
+                        var h = GetActualHeight() / (ToValue - FromValue) * (section.ToValue - section.FromValue);
+                        var bottom = (section.FromValue - FromValue) * GetActualHeight() / (ToValue - FromValue);
+                        Canvas.SetBottom(slice, bottom);
+                        Canvas.SetLeft(slice, ActualWidth * .5);
+                        slice.Height = h;
+                        slice.Width = BackWidth;
+                        slice.Fill = section.Fill;
+                    }
+
                 }
             }
         }
