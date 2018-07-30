@@ -340,10 +340,6 @@ namespace LiveCharts.Wpf
             }
         }
 
-        /// <summary>
-        /// 为顶部预留
-        /// </summary>
-       
         internal void Draw()
         {
 
@@ -427,7 +423,7 @@ namespace LiveCharts.Wpf
                 label.UpdateLayout();
 
                 Canvas.SetLeft(label, ActualWidth * .5 - label.ActualWidth * .5 - 10);
-                Canvas.SetBottom(label, bottom);
+                Canvas.SetBottom(label, bottom-(label.ActualHeight/2));
                 tick.SetBinding(Shape.StrokeProperty,
                     new Binding { Path = new PropertyPath(TicksForegroundProperty), Source = this });
                 tick.SetBinding(Shape.StrokeThicknessProperty,
@@ -470,11 +466,6 @@ namespace LiveCharts.Wpf
                     var bottom = (section.FromValue - FromValue) * GetActualHeight() / (ToValue - FromValue);
                     Canvas.SetBottom(slice, bottom);
                     Canvas.SetLeft(slice, ActualWidth * .5);
-                    if (Sections.IndexOf(section) == Sections.Count - 1)
-                    {
-                        Canvas.SetTop(slice, 0);
-
-                    }
                     slice.Height = h;
                     slice.Width = BackWidth;
                     slice.Fill = section.Fill;
