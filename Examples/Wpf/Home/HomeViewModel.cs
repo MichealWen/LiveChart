@@ -104,6 +104,7 @@ namespace Wpf.Home
                         new SampleVm("Solid Gauges", typeof(Gauge360)),
                         new SampleVm("Angular Gauge", typeof(AngularGaugeExmple)),
                         new SampleVm("Linear Gauge", typeof(LinearGaugeExample)),
+                        new SampleVm("Compass Gauge", typeof(CompassGaugeExample)),
                         new SampleVm("Heat Series", typeof(HeatSeriesExample)),
                         new SampleVm("GeoHeatMap", typeof(GeoMapExample)),
                         new SampleVm("Gantt Chart", typeof(GanttExample))

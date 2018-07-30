@@ -153,6 +153,9 @@
     <Compile Include="CartesianChart\WindowAxis\WindowAxisExample.xaml.cs">
       <DependentUpon>WindowAxisExample.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gauges\CompassGaugeExample.xaml.cs">
+      <DependentUpon>CompassGaugeExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gauges\LinearGaugeExample.xaml.cs">
       <DependentUpon>LinearGaugeExample.xaml</DependentUpon>
     </Compile>
@@ -411,6 +414,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gauges\AngularGaugeExmple.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gauges\CompassGaugeExample.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
