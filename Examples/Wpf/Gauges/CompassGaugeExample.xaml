@@ -16,6 +16,7 @@
                 Name="Button"
                 Click="Button_Click"></Button>
         <wpf:CompassGauge Name="Gauge"
+                          TicksStep="45"
                          TicksForeground="Black"
                          Foreground="Black"
                          FontWeight="Bold"

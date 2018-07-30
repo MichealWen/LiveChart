@@ -46,7 +46,7 @@ namespace LiveCharts.Wpf
         /// </summary>
         public CompassGauge()
         {
-            
+
 
             Canvas = new Canvas();
             Content = Canvas;
@@ -108,9 +108,9 @@ namespace LiveCharts.Wpf
         /// <summary>
         /// Gets or sets the opening angle in the gauge
         /// </summary>
-        public double Wedge
+        private double Wedge
         {
-            get { return (double)GetValue(WedgeProperty); }
+            get { return 360; }
             set { SetValue(WedgeProperty, value); }
         }
 
@@ -138,9 +138,9 @@ namespace LiveCharts.Wpf
         /// <summary>
         /// Gets or sets the separation between every label
         /// </summary>
-        public double LabelsStep
+        private double LabelsStep
         {
-            get { return (double)GetValue(LabelsStepProperty); }
+            get { return 90; }
             set { SetValue(LabelsStepProperty, value); }
         }
 
@@ -342,11 +342,11 @@ namespace LiveCharts.Wpf
         private void MoveStick()
         {
             Wedge = Wedge > 360 ? 360 : (Wedge < 0 ? 0 : Wedge);
-          
+
             var fromAlpha = (360 - Wedge) * .5;
             var toAlpha = 360 - fromAlpha;
 
-            var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, Value) ;
+            var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, Value);
 
             if (DisableaAnimations)
             {
@@ -414,7 +414,7 @@ namespace LiveCharts.Wpf
 
             for (var i = FromValue; i <= ToValue; i += ts)
             {
-                var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, i) + 90;
+                var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, i) - 90;
 
                 var tick = new Line
                 {
@@ -425,9 +425,27 @@ namespace LiveCharts.Wpf
                 };
                 Canvas.Children.Add(tick);
                 tick.SetBinding(Shape.StrokeProperty,
-                    new Binding { Path = new PropertyPath(TicksForegroundProperty), Source = this });
+                   new Binding { Path = new PropertyPath(TicksForegroundProperty), Source = this });
                 tick.SetBinding(Shape.StrokeThicknessProperty,
                     new Binding { Path = new PropertyPath(TicksStrokeThicknessProperty), Source = this });
+                if (i % 90 == 0) continue;
+                var label = new TextBlock
+                {
+                    Text = LabelFormatter(i)
+                };
+
+                label.SetBinding(EffectProperty,
+                    new Binding { Path = new PropertyPath(LabelsEffectProperty), Source = this });
+
+                Canvas.Children.Add(label);
+                label.UpdateLayout();
+                Canvas.SetLeft(label, alpha < 270
+                    ? tick.X2
+                    : (Math.Abs(alpha - 270) < 4
+                        ? tick.X2 - label.ActualWidth * .5
+                        : tick.X2 - label.ActualWidth));
+                Canvas.SetTop(label, tick.Y2);
+
             }
 
             var ls = double.IsNaN(LabelsStep) ? DecideInterval((ToValue - FromValue) / 5) : LabelsStep;
@@ -437,7 +455,7 @@ namespace LiveCharts.Wpf
 
             for (var i = FromValue; i <= ToValue; i += ls)
             {
-                var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, i) + 90;
+                var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, i) - 90;
 
                 var tick = new Line
                 {
@@ -448,20 +466,20 @@ namespace LiveCharts.Wpf
                 };
 
                 Canvas.Children.Add(tick);
-                string text = "";
+                string text = i.ToString();
                 switch (i.ToString())
                 {
                     case "0":
-                        text = "南";
-                        break;
-                    case "90":
-                        text = "西";
-                        break;
-                    case "180":
                         text = "北";
                         break;
-                    case "270":
+                    case "90":
                         text = "东";
+                        break;
+                    case "180":
+                        text = "南";
+                        break;
+                    case "270":
+                        text = "西";
                         break;
                     default:
                         break;
@@ -487,6 +505,8 @@ namespace LiveCharts.Wpf
                 tick.SetBinding(Shape.StrokeThicknessProperty,
                     new Binding { Path = new PropertyPath(TicksStrokeThicknessProperty), Source = this });
             }
+
+
             MoveStick();
         }
 
