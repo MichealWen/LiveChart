@@ -90,11 +90,11 @@ namespace LiveCharts.Wpf
 
         #region Properties
 
-        private Canvas Canvas { get; set; }
-        private Path Stick { get; set; }
-        private RotateTransform StickRotateTransform { get; set; }
-        private bool IsControlLaoded { get; set; }
-        private Dictionary<AngularSection, PieSlice> Slices { get; set; }
+        internal Canvas Canvas { get; set; }
+        internal Path Stick { get; set; }
+        internal RotateTransform StickRotateTransform { get; set; }
+        internal bool IsControlLaoded { get; set; }
+        internal Dictionary<AngularSection, PieSlice> Slices { get; set; }
 
         /// <summary>
         /// The wedge property
@@ -336,7 +336,7 @@ namespace LiveCharts.Wpf
             ag.Draw();
         }
 
-        private void MoveStick()
+        internal virtual void MoveStick()
         {
             Wedge = Wedge > 360 ? 360 : (Wedge < 0 ? 0 : Wedge);
 
@@ -356,7 +356,7 @@ namespace LiveCharts.Wpf
             }
         }
 
-        internal void Draw()
+        internal virtual void Draw()
         {
             if (!IsControlLaoded) return;
 
@@ -469,7 +469,7 @@ namespace LiveCharts.Wpf
             MoveStick();
         }
 
-        internal void UpdateSections()
+        internal virtual void UpdateSections()
         {
             if (!IsControlLaoded) return;
 
@@ -511,7 +511,7 @@ namespace LiveCharts.Wpf
             }
         }
 
-        private static double LinearInterpolation(double fromA, double toA, double fromB, double toB, double value)
+        internal static double LinearInterpolation(double fromA, double toA, double fromB, double toB, double value)
         {
             var p1 = new Point(fromB, fromA);
             var p2 = new Point(toB, toA);
@@ -523,7 +523,7 @@ namespace LiveCharts.Wpf
             return m*(value - p1.X) + p1.Y;
         }
 
-        private static double DecideInterval(double minimum)
+        internal static double DecideInterval(double minimum)
         {
             var magnitude = Math.Pow(10, Math.Floor(Math.Log(minimum) / Math.Log(10)));
 

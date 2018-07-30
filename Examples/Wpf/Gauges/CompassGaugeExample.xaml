@@ -15,14 +15,16 @@
         <Button Margin="15"
                 Name="Button"
                 Click="Button_Click"></Button>
+    
+
         <wpf:CompassGauge Name="Gauge"
                           LabelsStep="30"
                           TicksStep="5"
                          TicksForeground="Black"
                          Foreground="Black"
                          FontWeight="Bold"
-                         Grid.Row="1">
-
+                          Grid.Row="1">
+            
         </wpf:CompassGauge>
 
     </Grid>
