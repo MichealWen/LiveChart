@@ -84,7 +84,7 @@ namespace LiveCharts.Wpf
                 IsControlLaoded = true;
                 Draw();
             };
-
+           
             Slices = new Dictionary<AngularSection, PieSlice>();
         }
 
@@ -447,9 +447,9 @@ namespace LiveCharts.Wpf
                 Canvas.Children.Add(tick);
                 var label = new TextBlock
                 {
+                   
                     Text = LabelFormatter(i)
-                };
-
+                }; 
                 label.SetBinding(EffectProperty,
                     new Binding {Path = new PropertyPath(LabelsEffectProperty), Source = this});
 
@@ -487,26 +487,22 @@ namespace LiveCharts.Wpf
 
                 foreach (var section in Sections)
                 {
-                    if (section.Visibility==Visibility.Visible)
-                    {
-                        
-                  
+                    //if (section.Visibility != Visibility.Visible) continue;
                     var slice = Slices[section];
                     
                     Canvas.SetTop(slice, ActualHeight * .5);
                     Canvas.SetLeft(slice, ActualWidth * .5);
               
                     var start = LinearInterpolation(fromAlpha, toAlpha,
-                        FromValue, ToValue, section.FromValue) + 180;
+                                    FromValue, ToValue, section.FromValue) + 180;
                     var end = LinearInterpolation(fromAlpha, toAlpha,
-                        FromValue, ToValue, section.ToValue) + 180;
+                                  FromValue, ToValue, section.ToValue) + 180;
 
                     slice.RotationAngle = start;
                     slice.WedgeAngle = end - start;
                     slice.Radius = d*.5;
                     slice.InnerRadius = d*.5*SectionsInnerRadius;
                     slice.Fill = section.Fill;
-                    }
                 }
             }
         }

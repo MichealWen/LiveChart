@@ -14,8 +14,8 @@ namespace Wpf.Gauges
         {
             InitializeComponent();
 
-            Value = 160;
 
+            Button.Content = Value.ToString();
             DataContext = this;
         }
 
@@ -31,7 +31,8 @@ namespace Wpf.Gauges
 
         private void ChangeValueOnClick(object sender, RoutedEventArgs e)
         {
-            Value = new Random().Next(50, 250);
+            Value = new Random().Next(500, 1100);
+            Button.Content = Value.ToString();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

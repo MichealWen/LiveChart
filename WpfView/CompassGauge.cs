@@ -249,13 +249,13 @@ namespace LiveCharts.Wpf
             }
             if (label.Text == "东")
             {
-                Canvas.SetLeft(label, tick.X2 - label.ActualWidth * Math.Cos(alpha));
+                Canvas.SetLeft(label, tick.X2 - label.ActualWidth * 1.1);
                 Canvas.SetTop(label, tick.Y2 - label.ActualHeight * .5);
             }
             if (label.Text == "南")
             {
                 Canvas.SetLeft(label, tick.X2 - label.ActualWidth * .5);
-                Canvas.SetTop(label, tick.Y2 - label.ActualHeight * .5);
+                Canvas.SetTop(label, tick.Y2 - label.ActualHeight *1.05);
             }
             if (label.Text == "西")
             {
