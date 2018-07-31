@@ -23,7 +23,7 @@
                           LabelsStep="30"
                           TicksStep="5"
                          TicksForeground="Black"
-                         Foreground="Black"
+                        
                          FontWeight="Bold"
                           Grid.Row="1">
             

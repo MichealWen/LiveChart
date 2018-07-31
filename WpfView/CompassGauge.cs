@@ -44,15 +44,17 @@ namespace LiveCharts.Wpf
         /// <summary>
         /// 构造方法
         /// </summary>
-        public CompassGauge():base()
+        public CompassGauge() : base()
         {
-
+            LabelsStep = 30;
+            TicksStep = 5;
+            FromValue = 0;
+            ToValue = 359;
+            Wedge = 360;
         }
-        private new double FromValue = 0;
-        private new double ToValue = 359;
-        private new double Wedge = 360;
 
-        internal override  void MoveStick()
+
+        internal override void MoveStick()
         {
             Wedge = Wedge > 360 ? 360 : (Wedge < 0 ? 0 : Wedge);
 
@@ -172,7 +174,7 @@ namespace LiveCharts.Wpf
         /// <param name="ticksHi"></param>
         /// <param name="labelsHj"></param>
         /// <param name="i"></param>
-        void DrawTick(double fromAlpha, double toAlpha, double ticksHi,double labelsHj,double i)
+        void DrawTick(double fromAlpha, double toAlpha, double ticksHi, double labelsHj, double i)
         {
             var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, i) - 90;
 
@@ -191,7 +193,7 @@ namespace LiveCharts.Wpf
             tick.SetBinding(Shape.StrokeThicknessProperty,
                 new Binding { Path = new PropertyPath(TicksStrokeThicknessProperty), Source = this });
             string text = "";
-            if(i%90==0)
+            if (i % 90 == 0)
             {
                 switch (i.ToString())
                 {
@@ -225,27 +227,47 @@ namespace LiveCharts.Wpf
 
             Canvas.Children.Add(label);
             label.UpdateLayout();
-            if(alpha>=-90 && alpha < 0)
+            if (alpha >= -90 && alpha < 0)
             {
-                Canvas.SetLeft(label,tick.X2-label.ActualWidth*.7);
+                Canvas.SetLeft(label, tick.X2 - label.ActualWidth * .7);
                 Canvas.SetTop(label, tick.Y2);
             }
-            else if (alpha > 0 && alpha <90)
+            else if (alpha > 0 && alpha < 90)
             {
                 Canvas.SetLeft(label, tick.X2 - label.ActualWidth);
-                Canvas.SetTop(label, tick.Y2-label.ActualHeight*.5);
+                Canvas.SetTop(label, tick.Y2 - label.ActualHeight * .7);
             }
-            else if(alpha > 90 && alpha <= 180)
+            else if (alpha > 90 && alpha <= 180)
             {
-                Canvas.SetLeft(label, tick.X2 );
-                Canvas.SetTop(label, tick.Y2 - label.ActualHeight*.7);
+                Canvas.SetLeft(label, tick.X2);
+                Canvas.SetTop(label, tick.Y2 - label.ActualHeight * .7);
             }
             else
             {
                 Canvas.SetLeft(label, tick.X2);
-                Canvas.SetTop(label, tick.Y2 );
+                Canvas.SetTop(label, tick.Y2);
             }
-           
+            if (label.Text == "东")
+            {
+                Canvas.SetLeft(label, tick.X2 - label.ActualWidth * Math.Cos(alpha));
+                Canvas.SetTop(label, tick.Y2 - label.ActualHeight * .5);
+            }
+            if (label.Text == "南")
+            {
+                Canvas.SetLeft(label, tick.X2 - label.ActualWidth * .5);
+                Canvas.SetTop(label, tick.Y2 - label.ActualHeight * .5);
+            }
+            if (label.Text == "西")
+            {
+                Canvas.SetLeft(label, tick.X2);
+                Canvas.SetTop(label, tick.Y2 - label.ActualHeight * 0.5);
+            }
+            if (label.Text == "北")
+            {
+                Canvas.SetLeft(label, tick.X2 - label.ActualWidth * .5);
+                Canvas.SetTop(label, tick.Y2);
+            }
+
         }
 
         internal override void UpdateSections()
