@@ -62,6 +62,10 @@ namespace LiveCharts.Wpf
             SetCurrentValue(LabelFormatterProperty, defaultFormatter);
             SetCurrentValue(LabelsEffectProperty,
                 new DropShadowEffect { ShadowDepth = 2, RenderingBias = RenderingBias.Performance });
+            SetCurrentValue(NeedleFillProperty, new SolidColorBrush(Colors.Red));
+            ValueRec = new Rectangle();
+            ValueRec.SetBinding(Shape.FillProperty,
+                new Binding { Path = new PropertyPath(NeedleFillProperty), Source = this });
 
             SizeChanged += (sender, args) =>
             {
@@ -70,7 +74,7 @@ namespace LiveCharts.Wpf
             };
 
             Slices = new Dictionary<AngularSection, Rectangle>();
-            NeedleFill = new SolidColorBrush(Colors.Red);
+       
         }
 
         #region Properties
@@ -217,11 +221,7 @@ namespace LiveCharts.Wpf
                     new Binding { Path = new PropertyPath(TicksStrokeThicknessProperty), Source = this });
             }
            
-            ValueRec = new Rectangle
-            {
-                Fill = NeedleFill,
-                Width = BackWidth / 4
-            };
+            ValueRec.Width = BackWidth / 4;
             Canvas.Children.Add(ValueRec);
             
             Canvas.SetLeft(ValueRec, ActualWidth * 0.5 + ValueRec.Width * 1.5);
