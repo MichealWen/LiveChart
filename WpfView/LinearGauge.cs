@@ -70,6 +70,7 @@ namespace LiveCharts.Wpf
             };
 
             Slices = new Dictionary<AngularSection, Rectangle>();
+            NeedleFill = new SolidColorBrush(Colors.Red);
         }
 
         #region Properties
@@ -88,23 +89,6 @@ namespace LiveCharts.Wpf
         // Using a DependencyProperty as the backing store for BackWidth.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty BackWidthProperty =
             DependencyProperty.Register("BackWidth", typeof(double), typeof(LinearGauge), new PropertyMetadata(30.0));
-
-
-                
-        /// <summary>
-        /// 水银柱颜色
-        /// </summary>
-        public Brush ValueColor
-        {
-            get { return (Brush)GetValue(ValueColorProperty); }
-            set { SetValue(ValueColorProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ValueColorProperty =
-            DependencyProperty.Register("ValueColor", typeof(Brush), typeof(LinearGauge), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
-
-
 
         #endregion
 
@@ -235,7 +219,7 @@ namespace LiveCharts.Wpf
            
             ValueRec = new Rectangle
             {
-                Fill = ValueColor,
+                Fill = NeedleFill,
                 Width = BackWidth / 4
             };
             Canvas.Children.Add(ValueRec);

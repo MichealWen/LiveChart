@@ -18,7 +18,7 @@
         <wpf:LinearGauge
             Name="Gauge"
             Value="5"
-          
+            NeedleFill="Black"
             Background="Yellow"
                          FromValue="0"
                          ToValue="50"
