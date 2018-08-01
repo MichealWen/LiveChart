@@ -47,15 +47,31 @@ namespace LiveCharts.Wpf
         public CompassGauge() : base()
         {
             LabelsStep = 30;
-            TicksStep = 5;
+            TicksStep = 6;
             FromValue = 0;
             ToValue = 359;
             Wedge = 360;
         }
 
 
+        /// <summary>
+        /// 是否使用密位
+        /// </summary>
+        public bool IsMil
+        {
+            get { return (bool)GetValue(IsMilProperty); }
+            set { SetValue(IsMilProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsMil.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsMilProperty =
+            DependencyProperty.Register("IsMil", typeof(bool), typeof(CompassGauge), new PropertyMetadata(false));
+
+
+
         internal override void MoveStick()
         {
+            Value = Value < FromValue ? FromValue : Value;
             Wedge = Wedge > 360 ? 360 : (Wedge < 0 ? 0 : Wedge);
 
             var fromAlpha = (360 - Wedge) * .5;
@@ -77,7 +93,8 @@ namespace LiveCharts.Wpf
         internal override void Draw()
         {
             if (!IsControlLaoded) return;
-
+          
+            
             //No cache for you gauge :( kill and redraw please
             foreach (var child in Canvas.Children.Cast<UIElement>()
                 .Where(x => !Equals(x, Stick) && !(x is CompassSection) && !(x is PieSlice)).ToArray())
@@ -148,21 +165,23 @@ namespace LiveCharts.Wpf
             if (ls / (FromValue - ToValue) > 300)
                 throw new LiveChartsException("LabelsStep property is too small compared with the range in " +
                                               "the gauge, to avoid performance issues, please increase it.");
-
+            
             for (var i = FromValue; i <= ToValue; i += ls)
             {
-                if (i % 90 == 0)
+                if (i % 90 == 0 && !IsMil)
                     continue;
                 DrawTick(fromAlpha, toAlpha, ticksHi, labelsHj, i);
 
             }
-            //绘制东西南北标签
-            for (var i = FromValue; i <= ToValue; i += 90)
+            if (!IsMil)
             {
-                DrawTick(fromAlpha, toAlpha, ticksHi, labelsHj, i);
+                //绘制东西南北标签
+                for (var i = FromValue; i <= ToValue; i += (ToValue + 1) / 4)
+                {
+                    DrawTick(fromAlpha, toAlpha, ticksHi, labelsHj, i);
 
+                }
             }
-
             MoveStick();
         }
 
@@ -192,7 +211,7 @@ namespace LiveCharts.Wpf
                 new Binding { Path = new PropertyPath(TicksForegroundProperty), Source = this });
             tick.SetBinding(Shape.StrokeThicknessProperty,
                 new Binding { Path = new PropertyPath(TicksStrokeThicknessProperty), Source = this });
-            string text = "";
+            string text = i.ToString();
             if (i % 90 == 0)
             {
                 switch (i.ToString())
@@ -213,9 +232,25 @@ namespace LiveCharts.Wpf
                         break;
                 }
             }
-            else
+            if (IsMil)
             {
-                text = LabelFormatter(i);
+                if (i == 0)
+                    text = "0-00";
+                else
+                {
+                    text =Math.Round((i * 16.667), MidpointRounding.AwayFromZero).ToString();
+                    if (text.Length == 2) text = "0-" + text;
+                    else
+                    {
+                        char[] strArr;
+                        strArr = text.Length > 4 ? text.Take(4).ToArray() : text.ToArray();
+                        var num = strArr.Length;
+                        string s = new string(strArr,0,num-2);
+                        string e = new string(strArr, num - 2, 2);
+                        text = s + "-" + e;
+                    }
+                }
+                
             }
             var label = new TextBlock
             {
@@ -237,9 +272,9 @@ namespace LiveCharts.Wpf
                 Canvas.SetLeft(label, tick.X2 - label.ActualWidth);
                 Canvas.SetTop(label, tick.Y2 - label.ActualHeight * .7);
             }
-            else if (alpha > 90 && alpha <= 180)
+            else if (alpha >= 90 && alpha <= 180)
             {
-                Canvas.SetLeft(label, tick.X2);
+                Canvas.SetLeft(label, tick.X2-label.ActualWidth*.5);
                 Canvas.SetTop(label, tick.Y2 - label.ActualHeight * .7);
             }
             else

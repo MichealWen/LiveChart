@@ -94,7 +94,7 @@ namespace LiveCharts.Wpf
         internal Path Stick { get; set; }
         internal RotateTransform StickRotateTransform { get; set; }
         internal bool IsControlLaoded { get; set; }
-        internal Dictionary<AngularSection, PieSlice> Slices { get; set; }
+        internal  Dictionary<AngularSection, PieSlice> Slices { get; set; }
 
         /// <summary>
         /// The wedge property
@@ -330,7 +330,7 @@ namespace LiveCharts.Wpf
             ag.MoveStick();
         }
 
-        private static void Redraw(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        internal static void Redraw(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             var ag = (AngularGauge) o;
             ag.Draw();
@@ -338,6 +338,8 @@ namespace LiveCharts.Wpf
 
         internal virtual void MoveStick()
         {
+            Value = Value < FromValue ? FromValue : Value;
+            Value = Value < ToValue ? ToValue : Value;
             Wedge = Wedge > 360 ? 360 : (Wedge < 0 ? 0 : Wedge);
 
             var fromAlpha = (360 - Wedge) * .5;
@@ -404,7 +406,7 @@ namespace LiveCharts.Wpf
 
             UpdateSections();
 
-            var ts = double.IsNaN(TicksStep) ? DecideInterval((ToValue - FromValue)/5) : TicksStep;
+            var ts = double.IsNaN(TicksStep) ? (ToValue - FromValue)/10/10 : TicksStep;
             if (ts / (FromValue - ToValue) > 300)
                 throw new LiveChartsException("TicksStep property is too small compared with the range in " +
                                               "the gauge, to avoid performance issues, please increase it.");
@@ -427,7 +429,7 @@ namespace LiveCharts.Wpf
                     new Binding { Path = new PropertyPath(TicksStrokeThicknessProperty), Source = this });
             }
 
-            var ls = double.IsNaN(LabelsStep) ? DecideInterval((ToValue - FromValue) / 5) : LabelsStep;
+            var ls = double.IsNaN(LabelsStep) ? (ToValue - FromValue) / 10 : LabelsStep;
             if (ls / (FromValue - ToValue) > 300)
                 throw new LiveChartsException("LabelsStep property is too small compared with the range in " +
                                               "the gauge, to avoid performance issues, please increase it.");

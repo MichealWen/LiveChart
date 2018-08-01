@@ -18,10 +18,11 @@
                 Click="ChangeValueOnClick">Update</Button>
         <lvc:AngularGauge Grid.Row="1"
                           Value="{Binding Value}"
-                          FromValue="500"
-                          ToValue="1100"
-                          LabelsStep="50"
-                          TicksStep="25"
+                          FromValue="40"
+                          ToValue="90"
+                          
+                        
+                         
                           Wedge="300"
                           TicksForeground="White"
                           Foreground="White"

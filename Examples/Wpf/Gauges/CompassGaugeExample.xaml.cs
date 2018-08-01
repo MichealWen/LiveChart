@@ -29,6 +29,11 @@ namespace Wpf.Gauges
             var x = r.Next(0,359);
             Button.Content = x;
             Gauge.Value = x;
+            string s = Math.Round(x * 16.667, MidpointRounding.AwayFromZero).ToString();
+            if (Gauge.IsMil)
+                Button.Content = s;
+            else
+                Button.Content = x;
         }
     }
 }

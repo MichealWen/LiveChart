@@ -18,6 +18,9 @@
         <wpf:LinearGauge
             Name="Gauge"
             Value="5"
+          
+            ValueColor="Black"
+            Background="Yellow"
                          FromValue="0"
                          ToValue="50"
             TicksStep="5"
@@ -25,7 +28,13 @@
                          Foreground="Black"
                          FontWeight="Bold"
                          Grid.Row="1">
-
+            <wpf:LinearGauge.Sections>
+                <wpf:LinearSection FromValue="0"
+                                   ToValue="30"
+                                   Fill="Red">
+                    
+                </wpf:LinearSection>
+            </wpf:LinearGauge.Sections>
         </wpf:LinearGauge>
 
     </Grid>
