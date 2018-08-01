@@ -96,13 +96,13 @@ namespace LiveCharts.Wpf
         /// </summary>
         public Brush ValueColor
         {
-            get { return (Brush)GetValue(MyPropertyProperty); }
-            set { SetValue(MyPropertyProperty, value); }
+            get { return (Brush)GetValue(ValueColorProperty); }
+            set { SetValue(ValueColorProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty MyPropertyProperty =
-            DependencyProperty.Register("MyProperty", typeof(Brush), typeof(LinearGauge), new PropertyMetadata(default(Brush)));
+        public static readonly DependencyProperty ValueColorProperty =
+            DependencyProperty.Register("ValueColor", typeof(Brush), typeof(LinearGauge), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
 
 
 

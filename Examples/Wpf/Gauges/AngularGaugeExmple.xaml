@@ -20,9 +20,6 @@
                           Value="{Binding Value}"
                           FromValue="40"
                           ToValue="90"
-                          
-                        
-                         
                           Wedge="300"
                           TicksForeground="White"
                           Foreground="White"
