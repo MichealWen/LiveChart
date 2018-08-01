@@ -17,7 +17,7 @@
         <Button Margin="10" Name="Button"
                 Click="ChangeValueOnClick">Update</Button>
         <lvc:AngularGauge Grid.Row="1"
-                          Value="{Binding Value}"
+                         Name="Angular"
                           FromValue="40"
                           ToValue="90"
                           Wedge="300"

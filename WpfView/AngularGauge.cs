@@ -338,8 +338,14 @@ namespace LiveCharts.Wpf
 
         internal virtual void MoveStick()
         {
-            Value = Value < FromValue ? FromValue : Value;
-            Value = Value > ToValue ? ToValue : Value;
+            if (Value < FromValue)
+            {
+                Value = FromValue;
+            }
+            if (Value > ToValue)
+            {
+                Value = ToValue;
+            }
             Wedge = Wedge > 360 ? 360 : (Wedge < 0 ? 0 : Wedge);
 
             var fromAlpha = (360 - Wedge) * .5;

@@ -21,7 +21,7 @@
         <wpf:CompassGauge 
             Background="Yellow"
             Name="Gauge"
-            IsMil="True"
+            IsMil="False"
                          TicksForeground="Black"
                          FontWeight="Bold"
                           Grid.Row="1">
