@@ -71,20 +71,21 @@ namespace LiveCharts.Wpf
 
         internal override void MoveStick()
         {
-            if (Value < FromValue)
+            var value = Value;
+            if (value < FromValue)
             {
-                Value = FromValue;
+                value = FromValue;
             }
-            if (Value > ToValue)
+            if (value > ToValue)
             {
-                Value = ToValue;
+                value = ToValue;
             }
             Wedge = Wedge > 360 ? 360 : (Wedge < 0 ? 0 : Wedge);
 
             var fromAlpha = (360 - Wedge) * .5;
             var toAlpha = 360 - fromAlpha;
 
-            var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, Value);
+            var alpha = LinearInterpolation(fromAlpha, toAlpha, FromValue, ToValue, value);
 
             if (DisableaAnimations)
             {

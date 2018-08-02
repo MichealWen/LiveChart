@@ -20,7 +20,7 @@
             Value="5"
             NeedleFill="Black"
             Background="Yellow"
-                         FromValue="0"
+                         FromValue="15"
                          ToValue="50"
             TicksStep="5"
                          TicksForeground="Black"
@@ -28,7 +28,7 @@
                          FontWeight="Bold"
                          Grid.Row="1">
             <wpf:LinearGauge.Sections>
-                <wpf:LinearSection FromValue="0"
+                <wpf:LinearSection FromValue="15"
                                    ToValue="30"
                                    Fill="Red">
                     

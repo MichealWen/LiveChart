@@ -112,17 +112,18 @@ namespace LiveCharts.Wpf
         /// </summary>
         internal override void MoveStick()
         {
+            var value = Value;
             if (ValueRec == null)
                 return;
-            if (Value < FromValue)
+            if (value < FromValue)
             {
-                Value = FromValue;
+                value = FromValue;
             }
-            if (Value > ToValue)
+            if (value > ToValue)
             {
-                Value = ToValue;
+                value = ToValue;
             }
-            var ValueHight = (GetActualHeight() / (ToValue - FromValue)) * (Value - FromValue);
+            var ValueHight = (GetActualHeight() / (ToValue - FromValue)) * (value - FromValue);
             
 
             if (DisableaAnimations)
