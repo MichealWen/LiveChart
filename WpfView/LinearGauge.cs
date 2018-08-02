@@ -63,7 +63,17 @@ namespace LiveCharts.Wpf
             SetCurrentValue(LabelsEffectProperty,
                 new DropShadowEffect { ShadowDepth = 2, RenderingBias = RenderingBias.Performance });
             SetCurrentValue(NeedleFillProperty, new SolidColorBrush(Colors.Red));
-            ValueRec = new Rectangle();
+            DropShadowEffect dse=new DropShadowEffect()
+            {
+                Direction = 360,
+                Opacity = 0.5
+            };
+            ValueRec = new Rectangle()
+            {
+                RadiusX = 3,
+                RadiusY = 3,
+                Effect = dse
+            };
             ValueRec.SetBinding(Shape.FillProperty,
                 new Binding { Path = new PropertyPath(NeedleFillProperty), Source = this });
 
